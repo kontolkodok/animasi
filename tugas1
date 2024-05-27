@@ -1,0 +1,91 @@
+package Tugas3;
+
+import java.awt.Graphics;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+
+public class no1 extends java.applet.Applet implements Runnable {
+    private Thread runner;  // Thread for running the animation
+    private int xpos, ypos; // Position of the oval
+    private BufferedImage offscreen; // Buffered image for double buffering
+    private Graphics bufferGraphics; // Graphics context for the buffe
+
+    public void init() {
+        setSize(200, 200);  // Setting the applet size
+        offscreen = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        bufferGraphics = offscreen.getGraphics();
+    }
+
+    public void start() {
+        if (runner == null) {
+            runner = new Thread(this);
+            runner.start();
+        }
+    }
+
+    public void stop() {
+        if (runner != null) {
+            runner.interrupt();
+            runner = null;
+        }
+    }
+
+    public void run() {
+        setBackground(Color.white);
+        while (Thread.currentThread() == runner) {
+            // Move the oval from left to right
+            for (xpos = 5; xpos <= 105; xpos += 4) {
+                repaint();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+            // Move the oval from top to bottom
+            for (ypos = 5; ypos <= 105; ypos += 4) {
+                repaint();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+            // Move the oval from right to left
+            for (xpos = 105; xpos >= 5; xpos -= 4) {
+                repaint();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+            // Move the oval from bottom to top
+            for (ypos = 105; ypos >= 5; ypos -= 4) {
+                repaint();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+    }
+
+    public void update(Graphics g) {
+        // Paint on the buffer
+        paint(bufferGraphics);
+        // Draw the buffer on the screen
+        g.drawImage(offscreen, 0, 0, this);
+    }
+
+    public void paint(Graphics g) {
+        // Draw the black background
+        g.setColor(Color.black);
+        g.fillRect(0, 0, 200, 200);
+
+        // Draw the red oval
+        g.setColor(Color.red);
+        g.fillOval(xpos, ypos, 90, 90);
+    }
+}
